@@ -2,3 +2,4 @@ cohost
 opencv-python
 python-twitter
 Mastodon.py
+PyTumblr
