@@ -3,7 +3,7 @@ import os
 from random import randint
 import twitter
 from cohost.models.user import User as CohostUser
-from cohost.models.block import CohostAttachmentBlock
+from cohost.models.block import AttachmentBlock as CohostAttachmentBlock
 
 videos_directory = os.environ["VIDEOS_DIR"]
 
@@ -12,7 +12,7 @@ twitter_consumer_secret = os.environ["TWITTER_CONSUMER_SECRET"]
 twitter_access_token_key = os.environ["TWITTER_ACCESS_TOKEN_KEY"]
 twitter_access_token_secret = os.environ["TWITTER_ACCESS_TOKEN_SECRET"]
 
-cohost_username = os.environ["COHOST_USERNAME"]
+cohost_email = os.environ["COHOST_EMAIL"]
 cohost_password = os.environ["COHOST_PASSWORD"]
 
 
@@ -49,7 +49,7 @@ def post_twitter():
 
 
 def post_cohost():
-    user = CohostUser.login(cohost_username, cohost_password)
+    user = CohostUser.login(cohost_email, cohost_password)
     project = user.getProject("randochrontendo")
 
     blocks = [CohostAttachmentBlock("image.jpg")]
