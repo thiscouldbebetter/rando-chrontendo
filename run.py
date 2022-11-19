@@ -1,9 +1,11 @@
-import cv2
 import os
+import time
 from random import randint
+
+import cv2
 import twitter
-from cohost.models.user import User as CohostUser
 from cohost.models.block import AttachmentBlock as CohostAttachmentBlock
+from cohost.models.user import User as CohostUser
 from mastodon import Mastodon
 
 videos_directory = os.environ.get("VIDEOS_DIR")
@@ -66,8 +68,11 @@ def post_mastodon():
         access_token=mastodon_access_token, api_base_url=mastodon_api_base_url
     )
     media = mastodon.media_post("image.jpg")
+    timeout = 1
     while media["url"] is None:
+        time.sleep(timeout)
         media = mastodon.media(media)
+        timeout *= 2
     mastodon.status_post("", media_ids=[media["id"]])
 
 
