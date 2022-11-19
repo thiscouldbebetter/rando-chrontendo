@@ -6,18 +6,18 @@ from cohost.models.user import User as CohostUser
 from cohost.models.block import AttachmentBlock as CohostAttachmentBlock
 from mastodon import Mastodon
 
-videos_directory = os.environ["VIDEOS_DIR"]
+videos_directory = os.environ.get("VIDEOS_DIR")
 
-twitter_consumer_key = os.environ["TWITTER_CONSUMER_KEY"]
-twitter_consumer_secret = os.environ["TWITTER_CONSUMER_SECRET"]
-twitter_access_token_key = os.environ["TWITTER_ACCESS_TOKEN_KEY"]
-twitter_access_token_secret = os.environ["TWITTER_ACCESS_TOKEN_SECRET"]
+twitter_consumer_key = os.environ.get("TWITTER_CONSUMER_KEY")
+twitter_consumer_secret = os.environ.get("TWITTER_CONSUMER_SECRET")
+twitter_access_token_key = os.environ.get("TWITTER_ACCESS_TOKEN_KEY")
+twitter_access_token_secret = os.environ.get("TWITTER_ACCESS_TOKEN_SECRET")
 
-cohost_email = os.environ["COHOST_EMAIL"]
-cohost_password = os.environ["COHOST_PASSWORD"]
+cohost_email = os.environ.get("COHOST_EMAIL")
+cohost_password = os.environ.get("COHOST_PASSWORD")
 
-mastodon_access_token = os.environ["MASTODON_ACCESS_TOKEN"]
-mastodon_api_base_url = os.environ["MASTODON_API_BASE_URL"]
+mastodon_access_token = os.environ.get("MASTODON_ACCESS_TOKEN")
+mastodon_api_base_url = os.environ.get("MASTODON_API_BASE_URL")
 
 
 def run():
@@ -66,6 +66,8 @@ def post_mastodon():
         access_token=mastodon_access_token, api_base_url=mastodon_api_base_url
     )
     media = mastodon.media_post("image.jpg")
+    while media["url"] is None:
+        media = mastodon.media(media)
     mastodon.status_post("", media_ids=[media["id"]])
 
 
