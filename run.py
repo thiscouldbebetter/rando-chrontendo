@@ -4,6 +4,7 @@ from random import randint
 import twitter
 from cohost.models.user import User as CohostUser
 from cohost.models.block import AttachmentBlock as CohostAttachmentBlock
+from mastodon import Mastodon
 
 videos_directory = os.environ["VIDEOS_DIR"]
 
@@ -14,6 +15,9 @@ twitter_access_token_secret = os.environ["TWITTER_ACCESS_TOKEN_SECRET"]
 
 cohost_email = os.environ["COHOST_EMAIL"]
 cohost_password = os.environ["COHOST_PASSWORD"]
+
+mastodon_access_token = os.environ["MASTODON_ACCESS_TOKEN"]
+mastodon_api_base_url = os.environ["MASTODON_API_BASE_URL"]
 
 
 def run():
@@ -34,6 +38,7 @@ def run():
 
     post_twitter()
     post_cohost()
+    post_mastodon()
 
 
 def post_twitter():
@@ -54,6 +59,14 @@ def post_cohost():
 
     blocks = [CohostAttachmentBlock("image.jpg")]
     project.post("", blocks)
+
+
+def post_mastodon():
+    mastodon = Mastodon(
+        access_token=mastodon_access_token, api_base_url=mastodon_api_base_url
+    )
+    media = mastodon.media_post("image.jpg")
+    mastodon.status_post("", media_ids=[media["id"]])
 
 
 if __name__ == "__main__":
