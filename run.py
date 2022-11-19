@@ -7,6 +7,7 @@ import twitter
 from cohost.models.block import AttachmentBlock as CohostAttachmentBlock
 from cohost.models.user import User as CohostUser
 from mastodon import Mastodon
+import pytumblr
 
 videos_directory = os.environ.get("VIDEOS_DIR")
 
@@ -20,6 +21,11 @@ cohost_password = os.environ.get("COHOST_PASSWORD")
 
 mastodon_access_token = os.environ.get("MASTODON_ACCESS_TOKEN")
 mastodon_api_base_url = os.environ.get("MASTODON_API_BASE_URL")
+
+tumblr_consumer_key = os.environ.get("TUMBLR_CONSUMER_KEY")
+tumblr_consumer_secret = os.environ.get("TUMBLR_CONSUMER_SECRET")
+tumblr_oauth_token = os.environ.get("TUMBLR_OAUTH_TOKEN")
+tumblr_oauth_secret = os.environ.get("TUMBLR_OAUTH_SECRET")
 
 
 def run():
@@ -41,6 +47,7 @@ def run():
     post_twitter()
     post_cohost()
     post_mastodon()
+    post_tumblr()
 
 
 def post_twitter():
@@ -74,6 +81,16 @@ def post_mastodon():
         media = mastodon.media(media)
         timeout *= 2
     mastodon.status_post("", media_ids=[media["id"]])
+
+
+def post_tumblr():
+    client = pytumblr.TumblrRestClient(
+        tumblr_consumer_key,
+        tumblr_consumer_secret,
+        tumblr_oauth_token,
+        tumblr_oauth_secret,
+    )
+    client.create_photo("randochrontendo.tumblr.com", data="image.jpg")
 
 
 if __name__ == "__main__":
