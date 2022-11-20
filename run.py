@@ -1,13 +1,24 @@
+import logging
 import os
 import time
 from random import randint
 
 import cv2
+import pytumblr
 import twitter
 from cohost.models.block import AttachmentBlock as CohostAttachmentBlock
 from cohost.models.user import User as CohostUser
 from mastodon import Mastodon
-import pytumblr
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+fh = logging.FileHandler("randochrontendo.log")
+fh.setLevel(logging.INFO)
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+fh.setFormatter(formatter)
+logger.addHandler(fh)
+
 
 videos_directory = os.environ.get("VIDEOS_DIR")
 
@@ -44,10 +55,25 @@ def run():
     vid.release()
     cv2.destroyAllWindows()
 
-    post_twitter()
-    post_cohost()
-    post_mastodon()
-    post_tumblr()
+    try:
+        post_twitter()
+    except Exception as e:
+        logger.error(f"Twitter post failed: {e}")
+
+    try:
+        post_cohost()
+    except Exception as e:
+        logger.error(f"Cohost post failed: {e}")
+
+    try:
+        post_tumblr()
+    except Exception as e:
+        logger.error(f"Tumblr post failed: {e}")
+
+    try:
+        post_mastodon()
+    except Exception as e:
+        logger.error(f"Mastodon post failed: {e}")
 
 
 def post_twitter():
