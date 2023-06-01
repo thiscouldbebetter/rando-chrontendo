@@ -13,6 +13,5 @@ Entertainment System.
 Setup
 -----
 
-Follow the steps in the document Documentation/Running_Rando_Chrontendo.md
-to download the required files, set up the required Mastodon API keys,
-and start posting random frames
+Follow the steps in the document Documentation/Using_Rando_Chrontendo_to_Post_to_Mastodon.md
+to download the required files, set up the required Mastodon API keys, and start posting random frames.
