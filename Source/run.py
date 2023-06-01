@@ -129,6 +129,7 @@ class RandoChrontendoPost:
     def _get_chapter_file(self):
         chapter_file_name = self.video_name + ".chapters.txt"
         chapter_file_path = CHAPTERS_DIRECTORY + chapter_file_name
+        chapter_name_prev = ""
         try:
             with open(chapter_file_path, "r") as chapter_file_handle:
                 chapter_start_times_plus_names = list(chapter_file_handle)
@@ -171,7 +172,7 @@ class RandoChrontendoPost:
         seconds = math.floor((milliseconds / 1000) % 60)
         minutes = math.floor((milliseconds / (1000 * 60)) % 60)
         hours = math.floor((milliseconds / (1000 * 60 * 60)) % 24)
-        self.timestamp = f"{hours:02}:{minutes:02}:{seconds:02}"
+        self.timestamp = f"{hours:01}:{minutes:02}:{seconds:02}"
 
 
 if __name__ == "__main__":
