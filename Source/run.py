@@ -21,6 +21,7 @@ logger.addHandler(fh)
 
 
 VIDEOS_DIRECTORY = os.environ.get("VIDEOS_DIR")
+CHAPTERS_DIRECTORY = os.environ.get("CHAPTERS_DIR")
 
 TWITTER_CREDENTIALS = {
     "token": os.environ.get("TWITTER_ACCESS_TOKEN_KEY"),
@@ -69,16 +70,17 @@ def run():
     except Exception as e:
         logger.error(f"Mastodon post failed: {e}")
 
-
 class RandoChrontendoPost:
-    def __init__(self, image_file_name="image.jpg"):
+    def __init__(self, image_file_name="image.jpg", chapter_name=""):
         self.image_file_name = image_file_name
+        self.chapter_name = chapter_name
         self._get_video_file()
         self._write_image()
+        self._get_chapter_file()
 
     @property
     def alt_text(self):
-        return f"{self.video_name} ({self.timestamp})"
+        return f"{self.video_name} - {self.timestamp} - {self.chapter_name}"
 
     def post_twitter(self):
         twitter_upload = Twitter(
@@ -123,6 +125,29 @@ class RandoChrontendoPost:
         file_to_grab = randint(0, len(video_files) - 1)
         self.file_name = video_files[file_to_grab]
         self.video_name = (self.file_name.split(".")[0]).strip()
+
+    def _get_chapter_file(self):
+        chapter_file_name = self.video_name + ".chapters.txt"
+        chapter_file_path = CHAPTERS_DIRECTORY + chapter_file_name
+        try:
+            with open(chapter_file_path, "r") as chapter_file_handle:
+                chapter_start_times_plus_names = list(chapter_file_handle)
+        except Exception as e:
+            logger.error(f"Error reading chapter file '{chapter_file_path}': {e}")
+
+        for chapter_start_time_plus_name in chapter_start_times_plus_names:
+            chapter_start_time_and_name = chapter_start_time_plus_name.split(" ", 1)
+            chapter_start_time = chapter_start_time_and_name[0]
+            if chapter_start_time > self.timestamp:
+                self.chapter_name = chapter_name_prev
+                break
+            chapter_name = chapter_start_time_and_name[1]
+            chapter_name_prev = chapter_name
+
+        if self.chapter_name == "":
+            chapter_final_index = len(chapter_start_times_plus_names) - 1
+            chapter_final = chapter_start_times_plus_names[chapter_final_index];
+            self.chapter_name = chapter_final.split(" ", 1)[1];
 
     def _write_image(self):
         video = cv2.VideoCapture("{}/{}".format(VIDEOS_DIRECTORY, self.file_name))
