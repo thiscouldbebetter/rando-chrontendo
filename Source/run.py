@@ -136,7 +136,7 @@ class RandoChrontendoPost:
             logger.error(f"Error reading chapter file '{chapter_file_path}': {e}")
 
         for chapter_start_time_plus_name in chapter_start_times_plus_names:
-            chapter_start_time_and_name = chapter_start_time_plus_name.split(" ", 1)
+            chapter_start_time_and_name = chapter_start_time_plus_name.split("\t")
             chapter_start_time = chapter_start_time_and_name[0]
             if chapter_start_time > self.timestamp:
                 self.chapter_name = chapter_name_prev
@@ -147,7 +147,7 @@ class RandoChrontendoPost:
         if self.chapter_name == "":
             chapter_final_index = len(chapter_start_times_plus_names) - 1
             chapter_final = chapter_start_times_plus_names[chapter_final_index];
-            self.chapter_name = chapter_final.split(" ", 1)[1];
+            self.chapter_name = chapter_final.split("\t")[1];
 
     def _write_image(self):
         video = cv2.VideoCapture("{}/{}".format(VIDEOS_DIRECTORY, self.file_name))
